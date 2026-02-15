@@ -120,7 +120,6 @@ h1 {
     box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
     position: relative;
     z-index: 10;
-    max-font-size: 3em;
 }
 
 .yes-button:hover {

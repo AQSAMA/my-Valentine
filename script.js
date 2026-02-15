@@ -110,21 +110,25 @@ function handleNoClick() {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
+    // Calculate max position ranges with validation to prevent negative values
+    const maxXRange = Math.max(viewportWidth - buttonRect.width - EDGE_PADDING * 2, 0);
+    const maxYRange = Math.max(viewportHeight - buttonRect.height - EDGE_PADDING * 2, 0);
+    
     // Calculate safe zones (avoiding the center where Yes button is)
     const centerX = viewportWidth / 2;
     const centerY = viewportHeight / 2;
-    const safeZoneRadius = 200; // Keep away from center
+    const safeZoneRadiusSquared = 200 * 200; // Keep away from center (squared for efficiency)
     
     let newX, newY, attempts = 0;
     const maxAttempts = 10;
     
     do {
-        newX = EDGE_PADDING + Math.random() * (viewportWidth - buttonRect.width - EDGE_PADDING * 2);
-        newY = EDGE_PADDING + Math.random() * (viewportHeight - buttonRect.height - EDGE_PADDING * 2);
+        newX = EDGE_PADDING + Math.random() * maxXRange;
+        newY = EDGE_PADDING + Math.random() * maxYRange;
         attempts++;
     } while (
         attempts < maxAttempts &&
-        Math.sqrt(Math.pow(newX - centerX, 2) + Math.pow(newY - centerY, 2)) < safeZoneRadius
+        (newX - centerX) ** 2 + (newY - centerY) ** 2 < safeZoneRadiusSquared
     );
     
     // Apply position with smooth transition
