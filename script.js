@@ -31,30 +31,89 @@
     }
 })();
 */
-const messages = [
-    "متأكدة كلش لا؟",
-    "يعني صدك متريدين😔؟؟",
-    "لخاطري حبيبتي؟",
-    "زين فكّر بالموضوع شويّة!",
-    "بليز حبيبتي والله ادلعج😋",
-    "راح أزعل...",
-    "خلص تمام، ما راح ألح بعد...",
-    "اشاقة، كولي اي بليز ❤️",
-    "والله احبج ممكن تقبلين!",
-    "ممنوع الرفض!"
-];
+const translations = {
+    ar: {
+        question: "هل تقبلين تكونين عيد حبي؟",
+        yes: "اي",
+        no: "لا",
+        toggle: "English",
+        success: "🤍عرفتتتت رااحح تقلبيين🤍",
+        messages: [
+            "متأكدة كلش لا؟",
+            "يعني صدك متريدين😔؟؟",
+            "لخاطري حبيبتي؟",
+            "زين فكّر بالموضوع شويّة!",
+            "بليز حبيبتي والله ادلعج😋",
+            "راح أزعل...",
+            "خلص تمام، ما راح ألح بعد...",
+            "اشاقة، كولي اي بليز ❤️",
+            "والله احبج ممكن تقبلين!",
+            "ممنوع الرفض!"
+        ]
+    },
+    en: {
+        question: "Will you be my Valentine?",
+        yes: "Yes",
+        no: "No",
+        toggle: "العربية",
+        success: "🤍I knew you'd say yes!🤍",
+        messages: [
+            "Are you really sure?",
+            "Still no? 🥺",
+            "Please, pretty please?",
+            "Think about it one more time!",
+            "Come on, I'll spoil you 😋",
+            "You're breaking my heart...",
+            "Okay fine... I won't ask again...",
+            "Just teasing, please say yes ❤️",
+            "I really like you, please?",
+            "Nope, rejecting is not allowed!"
+        ]
+    }
+};
 
+let currentLanguage = "ar";
 let messageIndex = 0;
 
 function handleNoClick() {
     const noButton = document.querySelector('.no-button');
     const yesButton = document.querySelector('.yes-button');
+    const messages = translations[currentLanguage].messages;
     noButton.textContent = messages[messageIndex];
     messageIndex = (messageIndex + 1) % messages.length;
     const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
     yesButton.style.fontSize = `${currentSize * 1.5}px`;
+    const maxX = Math.max(window.innerWidth - noButton.offsetWidth - 20, 0);
+    const maxY = Math.max(window.innerHeight - noButton.offsetHeight - 20, 0);
+    noButton.style.position = "fixed";
+    noButton.style.left = `${Math.random() * maxX}px`;
+    noButton.style.top = `${Math.random() * maxY}px`;
+    noButton.style.transform = `rotate(${Math.floor(Math.random() * 30) - 15}deg)`;
 }
 
 function handleYesClick() {
     window.location.href = "yespage.html";
 }
+
+function toggleLanguage() {
+    currentLanguage = currentLanguage === "ar" ? "en" : "ar";
+    messageIndex = 0;
+    applyLanguage();
+}
+
+function applyLanguage() {
+    const question = document.querySelector("#question-text");
+    const yesButton = document.querySelector(".yes-button");
+    const noButton = document.querySelector(".no-button");
+    const successText = document.querySelector(".header_text");
+    const languageButton = document.querySelector(".language-button");
+    const content = translations[currentLanguage];
+
+    if (question) question.textContent = content.question;
+    if (yesButton) yesButton.textContent = content.yes;
+    if (noButton) noButton.textContent = content.no;
+    if (successText) successText.textContent = content.success;
+    if (languageButton) languageButton.textContent = content.toggle;
+}
+
+applyLanguage();
