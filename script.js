@@ -74,8 +74,11 @@ const translations = {
 
 let currentLanguage = "ar";
 let messageIndex = 0;
-const MAX_ROTATION_DEGREES = 15;
-const EDGE_PADDING = 20;
+const MAX_ROTATION_DEGREES = 8; // Reduced rotation for better readability
+const EDGE_PADDING = 50; // Increased padding to prevent edge overflow
+const MIN_BUTTON_SIZE = 1.2; // Min font size for No button
+const MAX_YES_SIZE = 3.0; // Max font size for Yes button (in em)
+const YES_GROWTH_FACTOR = 1.15; // Reduced growth for smoother scaling
 
 function getRandomRotation() {
     return Math.floor(Math.random() * ((MAX_ROTATION_DEGREES * 2) + 1)) - MAX_ROTATION_DEGREES;
@@ -85,18 +88,52 @@ function handleNoClick() {
     const noButton = document.querySelector('.no-button');
     const yesButton = document.querySelector('.yes-button');
     const messages = translations[currentLanguage].messages;
+    
+    // Update message
     noButton.textContent = messages[messageIndex];
     messageIndex = (messageIndex + 1) % messages.length;
+    
+    // Grow Yes button with limit
     const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
-    yesButton.style.fontSize = `${currentSize * 1.5}px`;
-    noButton.style.position = "fixed";
+    const containerFontSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+    const currentSizeEm = currentSize / containerFontSize;
+    
+    if (currentSizeEm < MAX_YES_SIZE) {
+        yesButton.style.fontSize = `${currentSize * YES_GROWTH_FACTOR}px`;
+    }
+    
+    // Add moving class and calculate safe position for No button
+    noButton.classList.add('moving');
+    
+    // Get dimensions after text update
     const buttonRect = noButton.getBoundingClientRect();
-    const viewportWidth = document.documentElement.clientWidth;
-    const viewportHeight = document.documentElement.clientHeight;
-    const maxX = Math.max(viewportWidth - buttonRect.width - EDGE_PADDING, 0);
-    const maxY = Math.max(viewportHeight - buttonRect.height - EDGE_PADDING, 0);
-    noButton.style.left = `${Math.random() * maxX}px`;
-    noButton.style.top = `${Math.random() * maxY}px`;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Calculate max position ranges with validation to prevent negative values
+    const maxXRange = Math.max(viewportWidth - buttonRect.width - EDGE_PADDING * 2, 0);
+    const maxYRange = Math.max(viewportHeight - buttonRect.height - EDGE_PADDING * 2, 0);
+    
+    // Calculate safe zones (avoiding the center where Yes button is)
+    const centerX = viewportWidth / 2;
+    const centerY = viewportHeight / 2;
+    const safeZoneRadiusSquared = 200 * 200; // Keep away from center (squared for efficiency)
+    
+    let newX, newY, attempts = 0;
+    const maxAttempts = 10;
+    
+    do {
+        newX = EDGE_PADDING + Math.random() * maxXRange;
+        newY = EDGE_PADDING + Math.random() * maxYRange;
+        attempts++;
+    } while (
+        attempts < maxAttempts &&
+        (newX - centerX) ** 2 + (newY - centerY) ** 2 < safeZoneRadiusSquared
+    );
+    
+    // Apply position with smooth transition
+    noButton.style.left = `${newX}px`;
+    noButton.style.top = `${newY}px`;
     noButton.style.transform = `rotate(${getRandomRotation()}deg)`;
 }
 
