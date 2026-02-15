@@ -9,8 +9,19 @@ body {
     flex-direction: column;
   }
   
-  .container {
+.container {
     text-align: center;
+  }
+
+  .language-button {
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #ffffff;
+    color: #d32f2f;
+    font-weight: bold;
   }
   
   h1 {
@@ -31,6 +42,8 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    position: relative;
+    z-index: 2;
   }
   
   .no-button {
@@ -41,6 +54,8 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    position: relative;
+    z-index: 1;
   }
   
   .gif_container img {
