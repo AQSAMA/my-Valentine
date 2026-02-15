@@ -74,6 +74,12 @@ const translations = {
 
 let currentLanguage = "ar";
 let messageIndex = 0;
+const MAX_ROTATION_DEGREES = 15;
+const EDGE_PADDING = 20;
+
+function getRandomRotation() {
+    return Math.floor(Math.random() * ((MAX_ROTATION_DEGREES * 2) + 1)) - MAX_ROTATION_DEGREES;
+}
 
 function handleNoClick() {
     const noButton = document.querySelector('.no-button');
@@ -83,12 +89,15 @@ function handleNoClick() {
     messageIndex = (messageIndex + 1) % messages.length;
     const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
     yesButton.style.fontSize = `${currentSize * 1.5}px`;
-    const maxX = Math.max(window.innerWidth - noButton.offsetWidth - 20, 0);
-    const maxY = Math.max(window.innerHeight - noButton.offsetHeight - 20, 0);
     noButton.style.position = "fixed";
+    const buttonRect = noButton.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
+    const maxX = Math.max(viewportWidth - buttonRect.width - EDGE_PADDING, 0);
+    const maxY = Math.max(viewportHeight - buttonRect.height - EDGE_PADDING, 0);
     noButton.style.left = `${Math.random() * maxX}px`;
     noButton.style.top = `${Math.random() * maxY}px`;
-    noButton.style.transform = `rotate(${Math.floor(Math.random() * 30) - 15}deg)`;
+    noButton.style.transform = `rotate(${getRandomRotation()}deg)`;
 }
 
 function handleYesClick() {
